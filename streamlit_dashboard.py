@@ -392,11 +392,12 @@ def _build_degree_skill_segment_intensity(_mm: pd.DataFrame, _mods: pd.DataFrame
 @st.cache_data(show_spinner=False)
 def _build_role_skills(_jobs: pd.DataFrame, _jrm: pd.DataFrame) -> pd.DataFrame:
     """Long table: (role_family_name, skill, skill_type, job_count, total_jobs, demand_pct)."""
+    role_col = "role_family" if "role_family" in _jrm.columns else "role_cluster"
     j = _jobs[["job_id", "tech_list", "soft_list"]].merge(
-        _jrm[["job_id", "role_cluster"]], on="job_id", how="inner"
+        _jrm[["job_id", role_col]], on="job_id", how="inner"
     )
     rows = []
-    for role, grp in j.groupby("role_cluster"):
+    for role, grp in j.groupby(role_col):
         total = grp["job_id"].nunique()
         tech_exp = grp.explode("tech_list").rename(columns={"tech_list": "skill"})
         soft_exp = grp.explode("soft_list").rename(columns={"soft_list": "skill"})
@@ -416,7 +417,8 @@ def _build_role_skills(_jobs: pd.DataFrame, _jrm: pd.DataFrame) -> pd.DataFrame:
 def _build_job_counts(jrm: pd.DataFrame) -> dict[str, int]:
     if jrm.empty:
         return {}
-    return jrm["role_cluster"].value_counts().to_dict()
+    role_col = "role_family" if "role_family" in jrm.columns else "role_cluster"
+    return jrm[role_col].value_counts().to_dict()
 
 
 @st.cache_data(show_spinner=False)
@@ -977,7 +979,7 @@ def _curriculum_segment_chart(
         plot_bgcolor="white",
         paper_bgcolor="white",
     )
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, use_container_width=True)
 
     primary_note = " (↑ = satisfied by Primary Major pick)" if primary_codes else ""
     st.caption(        
@@ -1515,7 +1517,7 @@ def _render_skill_requirements(data: dict, degree_label: str, sel_role: str) -> 
         xaxis={"tickangle": -35, "tickfont": {"size": 9.5}},
         yaxis={"tickfont": {"size": 10}, "autorange": "reversed"},
     )
-    st.plotly_chart(fig_hm, width="stretch")
+    st.plotly_chart(fig_hm, use_container_width=True)
 
 
 # ---------------------------------------------------------------------------
@@ -2041,7 +2043,8 @@ def _render_module_details(
 
 def main() -> None:
     st.set_page_config(
-        page_title="NUS Curriculum Readiness — MOE",
+        page_title="Curriculum Readiness Dashboard — MOE",
+        page_icon="📊",
         layout="wide",
         initial_sidebar_state="expanded",
     )
@@ -2063,11 +2066,13 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
-    st.title("NUS Curriculum Readiness Dashboard")
+    st.title("📊 Curriculum Readiness Dashboard")
     st.caption(
         "MOE policy review tool. Analyses how NUS degree curricula prepare graduates "
         "for Singapore's job market using module-to-job alignment scores validated against "
-        "human-annotated relevance labels. How to navigate the tabs:"
+        "human-annotated relevance labels. Use the Streamlit page selector in the sidebar "
+        "to switch between this dashboard and the Career Query Assistant. "
+        "How to navigate the tabs on this page:"
     )
     st.markdown(
         """
