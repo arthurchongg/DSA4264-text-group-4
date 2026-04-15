@@ -979,7 +979,7 @@ def _curriculum_segment_chart(
         plot_bgcolor="white",
         paper_bgcolor="white",
     )
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(fig, use_container_width=True)
 
     primary_note = " (↑ = satisfied by Primary Major pick)" if primary_codes else ""
     st.caption(        
@@ -1517,7 +1517,7 @@ def _render_skill_requirements(data: dict, degree_label: str, sel_role: str) -> 
         xaxis={"tickangle": -35, "tickfont": {"size": 9.5}},
         yaxis={"tickfont": {"size": 10}, "autorange": "reversed"},
     )
-    st.plotly_chart(fig_hm, width="stretch")
+    st.plotly_chart(fig_hm, use_container_width=True)
 
 
 # ---------------------------------------------------------------------------
