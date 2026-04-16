@@ -25,6 +25,7 @@ Then run the following commands to set up the environment, run the pipeline, and
 
 ```bash
 bash setup.sh
+source .venv/bin/activate
 .venv/bin/python scripts/run_test2_pipeline.py
 streamlit run streamlit_dashboard.py
 ```
