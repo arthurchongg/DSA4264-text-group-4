@@ -12,6 +12,7 @@ from collections import defaultdict
 from typing import Dict
 
 import pandas as pd
+from loguru import logger
 
 
 def extract_base_code(module_code: str) -> str:
@@ -74,8 +75,13 @@ def consolidate_module_variants(modules: pd.DataFrame) -> pd.DataFrame:
                                 # Handle both list and numpy array types
                                 if hasattr(items, '__iter__') and not isinstance(items, str):
                                     all_items.extend(list(items))
-                            except (TypeError, ValueError):
-                                pass
+                            except (TypeError, ValueError) as exc:
+                                logger.warning(
+                                    "Skipping unreadable '{}' entry for module '{}': {}",
+                                    field,
+                                    base_code,
+                                    exc,
+                                )
                     
                     # Deduplicate while preserving order  
                     seen = set()

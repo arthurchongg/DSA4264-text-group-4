@@ -25,17 +25,24 @@ labelled job pairs being rated genuinely relevant by annotators.
 
 from __future__ import annotations
 
+import sys
 import ast
 import csv
 import re
 from pathlib import Path
 from typing import Iterable
 
+# Ensure src/ is on sys.path so internal imports resolve to src/data_utils and
+# src/module_readiness directly, consistent with how the pipeline scripts work.
+_SRC = Path(__file__).resolve().parent / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-from src.module_readiness.analysis.role_banding import (
+from module_readiness.analysis.role_banding import (
     RoleBand,
     classify_role_score,
     role_band_lookup,
@@ -2066,7 +2073,7 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
-    st.title("📊 Curriculum Readiness Dashboard")
+    st.title("📊 NUS Curriculum Readiness Dashboard")
     st.caption(
         "MOE policy review tool. Analyses how NUS degree curricula prepare graduates "
         "for Singapore's job market using module-to-job alignment scores validated against "

@@ -9,6 +9,7 @@ from typing import Dict, List, Optional
 import pandas as pd
 
 from ..config.settings import PipelineConfig
+from data_utils.db_utils import read_table
 
 
 @dataclass
@@ -139,8 +140,6 @@ def _format_workload_token(workload: object) -> str:
 
 
 def load_nus_modules(config: PipelineConfig, role_rules: Dict[str, object]) -> ModulesIngestResult:
-    from data_utils.db_utils import read_table
-
     df_raw = read_table("raw_modules")
 
     # Build module_list and detail_map from DB rows

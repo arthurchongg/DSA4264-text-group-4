@@ -1,12 +1,19 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pandas as pd
 import streamlit as st
 
-from src.module_readiness.api import load_dashboard_query_backend
-from src.module_readiness.llm import OpenAICompatibleLLMClient, explain_job_query
+# Ensure src/ is on sys.path so internal imports resolve to src/data_utils and
+# src/module_readiness directly, consistent with how the pipeline scripts work.
+_SRC = Path(__file__).resolve().parents[1] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+
+from module_readiness.api import load_dashboard_query_backend
+from module_readiness.llm import OpenAICompatibleLLMClient, explain_job_query
 
 
 APP_ROOT = Path(__file__).resolve().parents[1]
